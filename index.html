@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>শুভ্র মায়া</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Georgia', serif;
+    }
+
+    body {
+        overflow: hidden;
+        background: black;
+        color: white;
+    }
+
+    /* BLACK OVERLAY */
+    #overlay {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        background: black;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        cursor: pointer;
+        transition: opacity 2s ease;
+    }
+
+    #overlay p {
+        font-size: 4.5vw;
+        opacity: 0.8;
+    }
+
+    /* IMAGE */
+    #image-container {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    #main-img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* responsive fix */
+        top: 0;
+        left: 0;
+        transform: scale(1.4);
+        transition: all 4s ease;
+    }
+
+    .animate-img {
+        transform: scale(1) translateY(-25%); /* responsive movement */
+    }
+
+    /* TEXT AREA */
+    #content {
+        position: absolute;
+        top: 60%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        text-align: center;
+        opacity: 0;
+        transition: opacity 2s ease;
+    }
+
+    #title {
+        font-size: 6vw;
+        margin-bottom: 4vw;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 2s ease;
+    }
+
+    .show-title {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+    }
+
+    #poem {
+        font-size: 5.2vw;
+        line-height: 1.8;
+        opacity: 0;
+        transition: opacity 2s ease;
+        color: red;
+    }
+
+    .show-poem {
+        opacity: 1 !important;
+    }
+
+    /* Tablet & larger screens */
+    @media (min-width: 768px) {
+        #title {
+            font-size: 32px;
+        }
+
+        #poem {
+            font-size: 20px;
+        }
+
+        #overlay p {
+            font-size: 20px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<!-- MUSIC -->
+<audio id="bg-music" src="music.mp3"></audio>
+
+<!-- BLACK SCREEN -->
+<div id="overlay">
+    <p id="overlay-text">Please wait... 5</p>
+</div>
+
+<!-- IMAGE -->
+<div id="image-container">
+    <img id="main-img" src="her_photo.jpg">
+</div>
+
+<!-- TEXT -->
+<div id="content">
+    <div id="title">শুভ্র মায়া</div>
+
+    <div id="poem">
+        সূর্যমুখীর উজ্জ্বল আভা ম্লান তোমার হাসিতে,<br><br>
+        মন হারায় ওই শান্ত চোখের গভীর মায়াতে।<br><br>
+        সাদা পোশাকের শুভ্র সাজে স্নিগ্ধ এক রূপ,<br><br>
+        চুপটি করে তাকিয়ে থাকা, সময়ও যেন নিশ্চুপ।
+    </div>
+</div>
+
+<script>
+    const overlay = document.getElementById("overlay");
+    const overlayText = document.getElementById("overlay-text");
+
+    const music = document.getElementById("bg-music");
+    const img = document.getElementById("main-img");
+    const content = document.getElementById("content");
+    const title = document.getElementById("title");
+    const poem = document.getElementById("poem");
+
+    let canTap = false;
+
+    // 🔻 COUNTDOWN
+    let count = 5;
+    overlayText.innerText = "Please wait... " + count;
+
+    const countdown = setInterval(() => {
+        count--;
+        overlayText.innerText = "Please wait... " + count;
+
+        if (count === 0) {
+            clearInterval(countdown);
+            overlayText.innerText = "Tap to feel something…";
+            canTap = true; // now allow tap
+        }
+    }, 1000);
+
+    // 🔻 TAP EVENT
+    overlay.addEventListener("click", () => {
+        if (!canTap) return; // block early taps
+
+        overlay.style.opacity = "0";
+
+        // Music fade-in
+        music.volume = 0;
+        music.play();
+
+        let vol = 0;
+        const fadeIn = setInterval(() => {
+            vol += 0.02;
+
+            if (vol >= 1) {
+                music.volume = 1;
+                clearInterval(fadeIn);
+            } else {
+                music.volume = vol;
+            }
+        }, 100);
+
+        setTimeout(() => {
+            overlay.style.display = "none";
+
+            // Start animations AFTER overlay gone
+            img.classList.add("animate-img");
+
+            setTimeout(() => {
+                content.style.opacity = "1";
+                title.classList.add("show-title");
+            }, 1000);
+
+            setTimeout(() => {
+                poem.classList.add("show-poem");
+            }, 3000);
+
+        }, 2000);
+    });
+</script>
+
+</body>
+</html>
